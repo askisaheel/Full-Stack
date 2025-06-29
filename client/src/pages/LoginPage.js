@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { login } from '../services/userService'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -28,6 +28,7 @@ const LoginPage = () => {
     try {
       const res = await login(formData)
       setSuccessMessage(res.data.message)
+      localStorage.setItem('user', 'true')
       setTimeout(() => navigate('/products'), 1500)
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed')
@@ -69,6 +70,13 @@ const LoginPage = () => {
           Login
         </button>
       </form>
+
+      <p className='mt-4 text-center text-sm text-gray-600'>
+        Don't have an account?{' '}
+        <Link to='/register' className='text-green-600 hover:underline'>
+          Register here
+        </Link>
+      </p>
     </div>
   )
 }

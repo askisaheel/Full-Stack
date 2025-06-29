@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { register } from '../services/userService'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 const RegisterPage = () => {
   const navigate = useNavigate()
@@ -27,10 +27,15 @@ const RegisterPage = () => {
 
     try {
       const res = await register(formData)
-      setSuccessMessage(res.data.message)
+      setSuccessMessage(res.data.message || 'Registered successfully')
       setTimeout(() => navigate('/login'), 1500)
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed')
+      const errorMsg = err.response?.data?.error
+      if (errorMsg?.toLowerCase().includes('username')) {
+        setError('This username is already taken. Please try another.')
+      } else {
+        setError(errorMsg || 'Registration failed. Please try again.')
+      }
     }
   }
 
@@ -69,6 +74,13 @@ const RegisterPage = () => {
           Register
         </button>
       </form>
+
+      <p className='mt-4 text-center text-sm text-gray-600'>
+        Already have an account?{' '}
+        <Link to='/login' className='text-blue-600 hover:underline'>
+          Login here
+        </Link>
+      </p>
     </div>
   )
 }
